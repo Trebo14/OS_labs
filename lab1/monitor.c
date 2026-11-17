@@ -42,8 +42,8 @@ int monitor_provide(Monitor *monitor, void *data) {
 	newNode->next = NULL;
 
 	int lock_rc = pthread_mutex_lock(&monitor->mutex);
-        if (lock_rc) {
-                free(newNode);
+    if (lock_rc) {
+        free(newNode);
 		return lock_rc;
 	}
 
@@ -58,7 +58,7 @@ int monitor_provide(Monitor *monitor, void *data) {
 		monitor->tail = newNode;
 	}
 
-        printf("Producer: sent event #%lu (data=%p)\n", newNode->seq, data);
+    printf("Producer: sent event #%lu (data=%p)\n", newNode->seq, data);
 
 	int signal_rc = pthread_cond_signal(&monitor->condition);
 	int unlock_rc = pthread_mutex_unlock(&monitor->mutex);
@@ -75,17 +75,17 @@ int monitor_consume(Monitor *monitor, void **data) {
 		return EINVAL;
 
 	int lock_rc = pthread_mutex_lock(&monitor->mutex);
-        if (lock_rc)
-                return lock_rc;
+    if (lock_rc)
+        return lock_rc;
 
 	while (monitor->head == NULL) {
 		int wait_rc = pthread_cond_wait(&monitor->condition, &monitor->mutex);
 		if (wait_rc != 0) {
-            		int unlock_rc = pthread_mutex_unlock(&monitor->mutex);
-            		if (unlock_rc != 0)
-                		return unlock_rc;
-        		return wait_rc;
-        	}
+            int unlock_rc = pthread_mutex_unlock(&monitor->mutex);
+            if (unlock_rc != 0)
+                return unlock_rc;
+        	return wait_rc;
+        }
 	}
 
 	Node *first = monitor->head;
@@ -98,19 +98,19 @@ int monitor_consume(Monitor *monitor, void **data) {
 	free(first);
 	printf("Consumer: received event #%lu (data=%p)\n", seq, *data);
 
-        int unlock_rc = pthread_mutex_unlock(&monitor->mutex);
-        if (unlock_rc)
-                return unlock_rc;
+    int unlock_rc = pthread_mutex_unlock(&monitor->mutex);
+    if (unlock_rc)
+        return unlock_rc;
 	return 0;
 }
 
 int monitor_destroy(Monitor *monitor) {
 	if (monitor == NULL)
-        	return EINVAL;
+        return EINVAL;
 
-    	int lock_rc = pthread_mutex_lock(&monitor->mutex);
+	int lock_rc = pthread_mutex_lock(&monitor->mutex);
 	if (lock_rc)
-        	return lock_rc;
+        return lock_rc;
 
 	if (monitor->head != NULL || monitor->tail != NULL) {
 		int unlock_rc = pthread_mutex_unlock(&monitor->mutex);
@@ -119,12 +119,12 @@ int monitor_destroy(Monitor *monitor) {
 
 	int unlock_rc = pthread_mutex_unlock(&monitor->mutex);
 	if (unlock_rc)
-        	return unlock_rc;
+        return unlock_rc;
 	int cond_rc = pthread_cond_destroy(&monitor->condition);
 	if (cond_rc)
-        	return cond_rc;
-    	int mutex_rc = pthread_mutex_destroy(&monitor->mutex);
+        return cond_rc;
+    int mutex_rc = pthread_mutex_destroy(&monitor->mutex);
 	if (mutex_rc)
-        	return mutex_rc;
-    	return 0;
+        return mutex_rc;
+    return 0;
 }
