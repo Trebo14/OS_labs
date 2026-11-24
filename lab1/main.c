@@ -28,7 +28,8 @@ void *producer(void *arg) {
         sleep(1);
 
         Event *event = malloc(sizeof *event);
-        die("malloc", ENOMEM);
+        if (event == NULL)
+            die("malloc", ENOMEM);
 
         event->id = i;
         event->value = i * 1.5;
