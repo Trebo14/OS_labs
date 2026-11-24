@@ -50,7 +50,7 @@ void *consumer(void *arg) {
         die("monitor_consume", rc);
 
         Event *event = data;
-        printf("Consumer: processed event #%d, value = %.1f\n", event->id, even>
+        printf("Consumer: processed event #%d, value = %.1f\n", event->id, event->value);
         free(event);
     }
     return NULL;
