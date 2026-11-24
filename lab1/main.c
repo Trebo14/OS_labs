@@ -1,7 +1,7 @@
 #include "monitor.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
+#include <errno.h>
 #include <unistd.h>
 #include <string.h>
 #define EVENT_COUNT 5
@@ -28,7 +28,7 @@ void *producer(void *arg) {
         sleep(1);
 
         Event *event = malloc(sizeof *event);
-        assert(event != NULL);
+        die("malloc", ENOMEM);
 
         event->id = i;
         event->value = i * 1.5;
