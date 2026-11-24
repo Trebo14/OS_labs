@@ -51,6 +51,7 @@ int monitor_provide(Monitor *monitor, void *data) {
     }
 
     newNode->seq = ++monitor->next_seq;
+	unsigned long seq = newNode->seq;
 
     if (monitor->tail == NULL) {
         monitor->tail = newNode;
@@ -68,7 +69,7 @@ int monitor_provide(Monitor *monitor, void *data) {
     if (signal_rc)
         return signal_rc;
 
-    printf("Producer: sent event #%lu (data=%p)\n", newNode->seq, data);
+    printf("Producer: sent event #%lu (data=%p)\n", seq, data);
     return 0;
 }
 
@@ -120,7 +121,7 @@ int monitor_destroy(Monitor *monitor) {
     if (monitor->head != NULL || monitor->tail != NULL) {
         int unlock_rc = pthread_mutex_unlock(&monitor->mutex);
         return unlock_rc != 0 ? unlock_rc : EBUSY;
-        }
+    }
 
     int unlock_rc = pthread_mutex_unlock(&monitor->mutex);
     if (unlock_rc)
