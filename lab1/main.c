@@ -80,7 +80,7 @@ int main(void) {
     die("pthread_join", rc);
 
     rc = monitor_destroy(&monitor);
-    die("monitor_destory", rc);
+    die("monitor_destroy", rc);
 
     return 0;
 }
